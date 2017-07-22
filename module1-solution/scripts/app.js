@@ -43,12 +43,17 @@
         }
         function setAppropriateStyle(numberOfItems) {
             console.log(numberOfItems);
-            if (0 < numberOfItems && 3 >= numberOfItems) {
+            if (0 == numberOfItems) {
+                $scope.inputState = "inputError";
+                $scope.msgState = "msgError";
+                return;
+            }
+            else if (0 < numberOfItems && 3 >= numberOfItems) {
                 $scope.inputState = "inputSuccess";
                 $scope.msgState = "msgSuccess";
                 return;
             }
-            $scope.inputState = "inputError";
+            $scope.inputState = "inputSuccess";
             $scope.msgState = "msgError";
 
         }
