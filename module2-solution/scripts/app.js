@@ -1,66 +1,59 @@
-﻿(function () {
-    'use strict';
-    angular.module('LunchCheck', [])
-        .controller('LunchCheckController', checkLunch)
+﻿
 
-    checkLunch.$inject = ['$scope'];
-    function checkLunch($scope) {
-        $scope.lunchItems = "";
-        $scope.inputState = "";
-        $scope.msgState = "";
+(function () {
 
+    angular.module('ShoppingListCheckOff', [])
+        .controller('ToBuyController', ToBuyController)
+        .controller('AlreadyBoughtController', AlreadyBoughtController)
+        .service('ShoppingListCheckOffService', ShoppingListCheckOffService);
 
-        $scope.performCheck = function () {
+    function ShoppingListCheckOffService() {
+        var chkOffService = this;
 
-            var lunchItems = parseInput();
-            var numberOfItems = countItems(lunchItems);
-            console.log(numberOfItems);
+        chkOffService.boughtItems = [];
+        chkOffService.toBuyItems = [];
 
-            setAppropriateMessage(numberOfItems);
-            setAppropriateStyle(numberOfItems);
+        chkOffService.getBoughtItems = function () {
+            return chkOffService.boughtItems;
+        };
+
+        chkOffService.buyItem = function (index) {
+            console.log("buy ", index);
+            chkOffService.boughtItems.push(chkOffService.toBuyItems[index]);
+            chkOffService.toBuyItems.splice(index,1);
             
         };
-        
-        function parseInput(input) {
-            return $scope.lunchItems.split(',');
-        }
-        function countItems(items) {
-            var itemCount = 0;
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].trim() != "")
-                    itemCount++;
-            }
-            return itemCount;
-        }
-        function setAppropriateMessage(numberOfItems) {
 
-            if (0 == numberOfItems)
-                $scope.msg = "Please enter data first";
-            else if (numberOfItems > 3)
-                $scope.msg = "Too Much!";
-            else
-                $scope.msg = "Enjoy!";
+    }
+
+    ToBuyController.$inject=['ShoppingListCheckOffService'];
+    function ToBuyController(ShoppingListCheckOffService) {
+
+        var toBuyCtrl = this;
+        toBuyCtrl.toBuyList = [{ name: "Apple", quantity: 10 }, { name: "Cookies", quantity: 5 }, { name: "Milk", quantity: 2 }, { name: "Tea", quantity: 3 }, { name: "Cheese", quantity: 7 }];
+
+        console.log('Original List:', toBuyCtrl.toBuyList);
+        ShoppingListCheckOffService.toBuyItems = toBuyCtrl.toBuyList;
+
+        toBuyCtrl.buy = function (index) {
+            ShoppingListCheckOffService.buyItem(index);
         }
-        function setAppropriateStyle(numberOfItems) {
-            console.log(numberOfItems);
-            if (0 == numberOfItems) {
-                $scope.inputState = "inputError";
-                $scope.msgState = "msgError";
-                return;
-            }
-            else if (0 < numberOfItems && 3 >= numberOfItems) {
-                $scope.inputState = "inputSuccess";
-                $scope.msgState = "msgSuccess";
-                return;
-            }
-            $scope.inputState = "inputSuccess";
-            $scope.msgState = "msgError";
-
-        }
-
-
 
 
 
     }
+    AlreadyBoughtController.$inject=['ShoppingListCheckOffService'];
+    function AlreadyBoughtController(ShoppingListCheckOffService) {
+
+        var boughtCtrl = this;
+        boughtCtrl.boughtList = ShoppingListCheckOffService.boughtItems;
+
+
+    }
+        
+
+
+
+
+
 })();
